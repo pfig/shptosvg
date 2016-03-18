@@ -5,7 +5,7 @@ my $LAST_UPDATE = '$Date: 2012/09/11 17:08:00 $' ;
 #------------------------------------------------------------------------
 # Copyright (c) 2009, K. Hardy
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #     * Redistributions of source code must retain the above copyright
@@ -16,7 +16,7 @@ my $LAST_UPDATE = '$Date: 2012/09/11 17:08:00 $' ;
 #     * The names of its contributors may not be used to endorse or promote
 #       products derived from this software without specific prior
 #       written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 # INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 # AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
@@ -29,6 +29,8 @@ my $LAST_UPDATE = '$Date: 2012/09/11 17:08:00 $' ;
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #------------------------------------------------------------------------
 
+
+use Getopt::Std;
 
 use Geo::ShapeFile ;
 use SVG ;
@@ -43,8 +45,7 @@ my $default_height = 72 * 10 ;
 
 #-- basic command line parameter processing
 
-require 'getopt.pl' ;
-&Getopt ('xySTpdC') ;
+getopt ('xySTpdC') ;
 sub Usage { my ($msg) = @_ ;
         print STDERR $msg, "\n" if ($msg ne "") ;
         print STDERR <<_EOU;
@@ -52,8 +53,8 @@ Usage: $0 [-x xsize] [-y ysize] [-l] [-p precision] [-d deltamin] [-T srs] [-S s
         -l lists the names of the attribute fields in the shapefile and then exits.
         -x xsize is image width (in points?); defaults to 576
         -y ysize is image height (in points?): defaults to 720
-        -T srs is for Target projection spatial reference system in Proj4 format; defaults to rectilinear lat/lon 
-        -S srs is the default Source spatial reference system in Proj4 format; defaults to rectilinear lat/lon 
+        -T srs is for Target projection spatial reference system in Proj4 format; defaults to rectilinear lat/lon
+        -S srs is the default Source spatial reference system in Proj4 format; defaults to rectilinear lat/lon
 	-C xmin,ymin:xmax,ymax crops the results to the bounding box defined by opposing corners in the target SRS
         -p precision is the number of decimal points used in the SVG for position coordinates; defaults to 1
         -d deltamin is the minimum change in either x or y from the previously plotted point in a line or polygon
@@ -85,8 +86,8 @@ Usage: $0 [-x xsize] [-y ysize] [-l] [-p precision] [-d deltamin] [-T srs] [-S s
                                   E.g.: "colorby="RANGE;m/0 to 50/#cfef7f;m/50 to 100/#a1f574;m/100 to 200/#95fbcb"
                                   In this example, the RANGE field contains strings like "0 to 50".  Full-blown
                                   regexes are possible, though.
-         Example inputspec: 
-            Rivers.shp,grep="NAME~(Red)|(Brazos)|(Pecos)",style="stroke:#1821DE;stroke-width:1",srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs" 
+         Example inputspec:
+            Rivers.shp,grep="NAME~(Red)|(Brazos)|(Pecos)",style="stroke:#1821DE;stroke-width:1",srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
 _EOU
         exit 1 ;
 }
@@ -506,7 +507,7 @@ foreach my $fx (0 .. $#shpf) {
 								) ;
 						}
 						$shpct++ ;
-							
+
 
 					}
 				}
@@ -568,7 +569,7 @@ foreach my $fx (0 .. $#shpf) {
 						foreach my $pr_pt (@points) {
 
 							#- scale and translate the projected points
-							$nx = ( ( ($pr_pt->[0] - $x_min)*$scale)) ; 
+							$nx = ( ( ($pr_pt->[0] - $x_min)*$scale)) ;
 							$ny = ((($pr_pt->[1]-$y_min)*$scale));
 
 							#- add to list of points iff "-d deltamin" distance away from previously plotted point
@@ -578,7 +579,7 @@ foreach my $fx (0 .. $#shpf) {
 								$px = $nx ; $py = $ny ;
 							}
 						}
-					
+
 						#- polygon or line, colorby or not
 						if ( (defined ($clrfld{$f}) && $clrfld{$f} ne "") || defined ($sameclr{$f}) || defined ($rngfld{$f}) ) {
 							$g->polygon (	points=>$pstr
@@ -608,7 +609,7 @@ foreach my $fx (0 .. $#shpf) {
 						    foreach my $pr_pt (@{$seg}) {
 
 							#- scale and translate the projected points
-							$nx = ( ( ($pr_pt->[0] - $x_min)*$scale)) ; 
+							$nx = ( ( ($pr_pt->[0] - $x_min)*$scale)) ;
 							$ny = ((($pr_pt->[1]-$y_min)*$scale));
 
 							#- add to list of points iff "-d deltamin" distance away from previously plotted point
@@ -619,7 +620,7 @@ foreach my $fx (0 .. $#shpf) {
 							}
 						    }
 						}
-					
+
 						if ( (defined ($clrfld{$f}) && $clrfld{$f} ne "") || defined ($sameclr{$f}) || defined ($rngfld{$f}) ) {
 							$g->polyline (	points=>$pstr
 								,	id=>"line$shpct"
@@ -779,7 +780,7 @@ sub RangeColor {	my ($f, $val, $ln) = @_ ;
 	my $pct ;
 
 	if ($ln) {
-		if ($rngdel{$f} == $ReallyBigNum) { 
+		if ($rngdel{$f} == $ReallyBigNum) {
 			$rngdel{$f} = 0 - $rngmin{$f} + 1 ;
 			$rngmin{$f} =  0 ;
 			$rngmax{$f} = log($rngmax{$f} + $rngdel{$f}) ;
